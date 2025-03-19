@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+      "checkJs": true,  // Enable TypeScript's checking in JS files
+      "allowJs": true,   // Allow JavaScript files
+      // "strict": true     // Enables strict type checking
+    }
+  }
+  

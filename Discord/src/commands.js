@@ -10,7 +10,9 @@ async function createCommandChoices() {
 
   for (let choice of choices) {
     commandChoices.push({
+      // @ts-ignore
       name: capitalize(choice.title[0].plain_text),
+      // @ts-ignore
       value: choice.title[0].plain_text.toLowerCase(),
     });
   }
@@ -57,7 +59,7 @@ const NEW_ISSUE = {
       description: 'Select a database',
       required: true,
       // this is not dynamic, make it dynamic
-      choices: await createCommandChoices(),
+      choices: createCommandChoices(),
     },
   ],
   type: 1,

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 
+//@ts-ignore
 export async function DiscordRequest(endpoint, options) {
   // append endpoint to root API URL
   const url = 'https://discord.com/api/v10/' + endpoint;
@@ -23,7 +24,7 @@ export async function DiscordRequest(endpoint, options) {
   // return original response
   return res;
 }
-
+//@ts-ignore
 export async function InstallGlobalCommands(appId, commands) {
   // API endpoint to overwrite global commands
   const endpoint = `applications/${appId}/commands`;
@@ -41,7 +42,7 @@ export function getRandomEmoji() {
   const emojiList = ['😭','😄','😌','🤓','😎','😤','🤖','😶‍🌫️','🌏','📸','💿','👋','🌊','✨'];
   return emojiList[Math.floor(Math.random() * emojiList.length)];
 }
-
+//@ts-ignore
 export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }

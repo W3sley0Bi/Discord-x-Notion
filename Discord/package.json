@@ -1,8 +1,8 @@
 {
-  "name": "discord-getting-started",
+  "name": "notion-for-discord",
   "private": true,
   "version": "1.0.0",
-  "description": "Discord example app",
+  "description": "Notion for Discord",
   "main": "app.js",
   "type": "module",
   "engines": {
@@ -13,7 +13,7 @@
     "register": "node ./src/commands.js",
     "dev": "nodemon ./src/app.js"
   },
-  "author": "Shay DeWael",
+  "author": "Wesley Obi",
   "license": "MIT",
   "dependencies": {
     "@notionhq/client": "^2.3.0",
