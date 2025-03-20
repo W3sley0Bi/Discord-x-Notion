@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createWebhook = void 0;
 const axios_1 = __importDefault(require("axios"));
+const express_1 = require("express");
 //@ts-ignore
 const createWebhook = async (name, channel_id) => {
     try {
@@ -28,8 +29,7 @@ const createWebhook = async (name, channel_id) => {
     catch (error) {
         //@ts-ignore
         console.error('Error creating webhook:', error.response?.data || error.message);
-        //@ts-ignore
-        res.status(500).send('Failed to create webhook.');
+        express_1.response.status(500).send('Failed to create webhook.');
     }
 };
 exports.createWebhook = createWebhook;

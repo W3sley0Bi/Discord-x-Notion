@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
-const utils_js_1 = require("./utils.js");
+const utils_1 = require("./utils");
 // Simple test command
 const TEST_COMMAND = {
     name: 'test',
@@ -23,8 +23,8 @@ const NEW_ISSUE = {
         },
         {
             type: 3,
-            name: 'name',
-            description: 'Enter the name of the issue',
+            name: 'title',
+            description: 'Enter the title of the issue',
             required: true,
         },
         {
@@ -45,4 +45,4 @@ const GENERATE_WEBOOK_COMMAND = {
     contexts: [0],
 };
 const ALL_COMMANDS = [TEST_COMMAND, GENERATE_WEBOOK_COMMAND, NEW_ISSUE];
-(0, utils_js_1.InstallGlobalCommands)(process.env.APP_ID, ALL_COMMANDS);
+(0, utils_1.InstallGlobalCommands)(process.env.APP_ID, ALL_COMMANDS);
