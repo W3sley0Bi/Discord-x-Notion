@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 3000;
  */
 if (process.env.PUBLIC_KEY) {
 //@ts-ignore
-  app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), interactions(req, res));
+  app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), (req,res) => interactions(req,res));
 
   app.listen(PORT, () => {
     console.log('Listening on port', PORT);
