@@ -26,8 +26,8 @@ const NEW_ISSUE = {
     },
     {
       type: 3,
-      name: 'name',
-      description: 'Enter the name of the issue',
+      name: 'title',
+      description: 'Enter the title of the issue',
       required: true,
     },
     {

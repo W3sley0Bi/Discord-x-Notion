@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { response } from 'express';
 
 export const createWebhook = async (name, channel_id) => {
 
@@ -18,6 +19,7 @@ export const createWebhook = async (name, channel_id) => {
         );
     
         const webhook = response.data;
+        
         console.log('Webhook created:', webhook);
         // res.status(201).send({
         //   message: 'Webhook created successfully!',
@@ -28,6 +30,6 @@ export const createWebhook = async (name, channel_id) => {
 
       } catch (error) {
         console.error('Error creating webhook:', error.response?.data || error.message);
-        res.status(500).send('Failed to create webhook.');
+        response.status(500).send('Failed to create webhook.');
       }
     }
