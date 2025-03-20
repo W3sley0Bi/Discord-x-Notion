@@ -3,12 +3,9 @@ import express from 'express';
 import {
   InteractionType,
   InteractionResponseType,
-  InteractionResponseFlags,
-  MessageComponentTypes,
-  ButtonStyleTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import {interactions} from './modules/interactions.js';
+import {interactions} from './modules/interactions';
 
 // Create an express app
 const app = express();

@@ -3,11 +3,11 @@ import {
     InteractionResponseType,
   } from 'discord-interactions';
 
-  import { getRandomEmoji, DiscordRequest } from '../utils.js';
-  import {createWebhook} from './webhook.js';
-  import { fetchDBs } from './crudDb.js';
-  import { SelectDB, CreateIssue } from '../commands/newIssue.js';
-
+  import { getRandomEmoji, DiscordRequest } from '../utils';
+  import {createWebhook} from './webhook';
+  import { SelectDB, CreateIssue } from '../commands/newIssue';
+  
+//@ts-ignore
 export async function interactions(req, res) {
     const { type, data, channel_id } = req.body;
    
