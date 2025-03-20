@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+//@ts-ignore
 export const createWebhook = async (name, channel_id) => {
 
       try {
@@ -27,7 +28,9 @@ export const createWebhook = async (name, channel_id) => {
         return webhook;
 
       } catch (error) {
+        //@ts-ignore
         console.error('Error creating webhook:', error.response?.data || error.message);
+        //@ts-ignore
         res.status(500).send('Failed to create webhook.');
       }
     }

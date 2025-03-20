@@ -3,14 +3,9 @@ import express from 'express';
 import {
   InteractionType,
   InteractionResponseType,
-  InteractionResponseFlags,
-  MessageComponentTypes,
-  ButtonStyleTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { getRandomEmoji, DiscordRequest } from './utils.js';
-import { getShuffledOptions, getResult } from './game.js';
-import { InteractionWebhook } from 'discord.js';
+import { getRandomEmoji } from './utils.js';
 import {createWebhook} from './modules/webhook.js';
 import { fetchDBs } from './modules/crudDb.js';
 
@@ -49,7 +44,7 @@ if (process.env.PUBLIC_KEY) {
           const choices = await fetchDBs();
           console.log('Fetched choices:', choices);
   
-          // Extract user input (if they are typing)
+          //@ts-ignore
           const focusedValue = data.options.find(opt => opt.focused)?.value || '';
   
           // Filter results based on user input (optional)
@@ -86,7 +81,7 @@ if (process.env.PUBLIC_KEY) {
       }
   
       if (name === 'new_issue') {
-
+        //@ts-ignore
         const databaseId = data.options?.find(opt => opt.name === 'database')?.value;
 
         // TODO Post the new ticket in the selected db
