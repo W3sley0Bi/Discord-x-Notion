@@ -15,7 +15,7 @@ export const getNotionPage = async (pageId: string) => {
 
 
 
-export const createComment = async (pageId: string) => {
+export const createComment = async (pageId: string, comment: string, user: string) => {
   const response = await notion.comments.create({
     "parent": {
       "page_id": `${pageId}`
@@ -23,7 +23,7 @@ export const createComment = async (pageId: string) => {
     "rich_text": [
       {
         "text": {
-          "content": "Hello world"
+          "content": `${user} says: ${comment}`
         }
       }
     ]
@@ -34,4 +34,9 @@ export const createComment = async (pageId: string) => {
 
 
 
+export const getComments = async (blockId: string)=> {
+  const response = await notion.comments.list({ block_id: blockId });
+    console.log(response);
+    return response
+} 
 

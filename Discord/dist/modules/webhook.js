@@ -27,15 +27,10 @@ const extractPageTitle = async (pageId) => {
     const titleProp = Object.values(page.properties).find((p) => p.type === 'title');
     return titleProp?.title?.[0]?.plain_text || 'Untitled';
 };
-const padDescription = (desc, minLength = 80) => {
-    if (desc.length >= minLength)
-        return desc;
-    return desc + ' '.repeat(minLength - desc.length);
-};
 const wrapContent = async (data) => {
     const props = data.properties || {};
     const author = await (0, notionUtils_1.fetchNotionUser)(data.last_edited_by?.id) || 'Someone';
-    const action = data.created_time === data.last_edited_time ? 'created a new task' : 'updated a task';
+    const action = data.created_time === data.last_edited_time ? 'new ticket' : 'updated a ticket';
     const embedFields = [];
     const usedTypes = new Set();
     const findField = (type, names = []) => {
@@ -87,6 +82,8 @@ const wrapContent = async (data) => {
         const titleProp = Object.values(props).find((p) => p.type === 'title');
         return titleProp?.title?.[0]?.plain_text || 'Untitled';
     };
+    const commentsList = await (0, notionUtils_1.getComments)(data.id);
+    const commentCount = commentsList.results.length;
     return {
         author: {
             name: `${author.name} ${action}`,
@@ -94,64 +91,78 @@ const wrapContent = async (data) => {
         },
         title: extractTitleFromProps(data.properties),
         url: data.url,
-        description: padDescription(description),
+        description: description,
         fields: embedFields,
         color: 0x5865f2,
         timestamp: new Date().toISOString(),
+        footer: {
+            text: `💬 ${commentCount}`,
+        },
     };
 };
 async function sendMessageToChannel(channelId, data) {
-    const url = `https://discord.com/api/v10/channels/${channelId}/messages`;
-    if (!data || !data.properties || !data.url)
-        return;
-    const embed = await wrapContent(data);
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [
-                        {
-                            type: 2,
-                            label: 'Comment',
-                            style: 1,
-                            custom_id: `add_comment_${data.id}`,
-                        },
-                    ],
-                },
-            ],
-        }),
-    });
-    if (!response.ok) {
-        const error = await response.json();
-        console.error('❌ Failed to send message:', error);
+    try {
+        const url = `https://discord.com/api/v10/channels/${channelId}/messages`;
+        if (!data || !data.properties || !data.url)
+            return;
+        const embed = await wrapContent(data);
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bot ${process.env.DISCORD_TOKEN}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                embeds: [embed],
+                components: [
+                    {
+                        type: 1, // Action row
+                        components: [
+                            {
+                                type: 2, // Button
+                                label: 'Comment',
+                                style: 1,
+                                custom_id: `add_comment_${data.id}`,
+                            },
+                        ],
+                    },
+                ],
+            }),
+        });
+        if (!response.ok) {
+            const error = await response.json();
+            console.error('❌ Failed to send message:', error);
+        }
+        else {
+            console.log('✅ Message sent to Discord!');
+        }
     }
-    else {
-        console.log('✅ Message sent to Discord!');
+    catch (error) {
+        console.error('❌ Error in sendMessageToChannel:', error);
     }
 }
 const notionDBAutomationWebHook = async (req, res) => {
-    const { channelId } = req.params;
-    const { source, data } = req.body;
-    console.log(JSON.stringify(req.body));
-    const key = `${source.automation_id}:${data.id}`;
-    if (debounceMap.has(key)) {
-        clearTimeout(debounceMap.get(key).timeout);
+    try {
+        const { channelId } = req.params;
+        const { source, data } = req.body;
+        const key = `${source.automation_id}:${data.id}`;
+        if (debounceMap.has(key)) {
+            clearTimeout(debounceMap.get(key).timeout);
+        }
+        const timeout = setTimeout(() => {
+            sendMessageToChannel(channelId, debounceMap.get(key).latestData);
+            debounceMap.delete(key);
+        }, DEBOUNCE_TIME);
+        debounceMap.set(key, {
+            timeout,
+            latestData: data,
+        });
     }
-    const timeout = setTimeout(() => {
-        sendMessageToChannel(channelId, debounceMap.get(key).latestData);
-        debounceMap.delete(key);
-    }, DEBOUNCE_TIME);
-    debounceMap.set(key, {
-        timeout,
-        latestData: data,
-    });
-    res.status(200).send({ received: true });
+    catch (error) {
+        console.error('❌ Error in notionDBAutomationWebHook:', error);
+    }
+    finally {
+        res.status(200).send({ received: true });
+    }
 };
 exports.notionDBAutomationWebHook = notionDBAutomationWebHook;

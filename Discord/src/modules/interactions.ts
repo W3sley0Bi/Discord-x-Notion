@@ -2,17 +2,16 @@ import {
     InteractionType,
     InteractionResponseType,
   } from 'discord-interactions';
-
-
-  import { getRandomEmoji, DiscordRequest } from '../utils';
-
-  import { SelectDB, CreateIssue } from '../commands/newIssue';
+  
+import { getRandomEmoji, DiscordRequest } from '../utils';
+import { SelectDB, CreateIssue } from '../commands/newIssue';
+import { createComment } from '../utils/notionUtils';
 
 
   
 //@ts-ignore
 export async function interactions(req, res) {
-    const { type, data, channel_id } = req.body;
+    const { type, data, channel_id, member } = req.body;
    
     /**
      * Handle verification requests
@@ -33,6 +32,63 @@ export async function interactions(req, res) {
           return res.status(400).json({ error: 'unknown command' });
       }
     }
+    
+    // button click in message componet
+    if (type === 3 || type === 5) {
+            const customId = data.custom_id;
+            if (customId.startsWith('add_comment_')) {
+                const interactionId = customId.replace('add_comment_', '');
+                return res.json({
+                    type: 9,
+                    data: {
+                        custom_id: `submit_comment_${interactionId}`,
+                        title: 'Add a Comment',
+                        components: [
+                            {
+                                type: 1, // Action row
+                                components: [
+                                    {
+                                        type: 4, // Text input
+                                        custom_id: 'comment_text',
+                                        style: 2,
+                                        label: 'Write your comment',
+                                        placeholder: 'Type your comment here...',
+                                        min_length: 1,
+                                        max_length: 300,
+                                        required: true,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                });
+            }
+            
+            if (customId.startsWith('submit_comment_')) {
+                        const pageId = customId.replace('submit_comment_', '');
+                        const comment = data.components[0].components[0].value; 
+                        try {
+                            await createComment(pageId, comment, member.user.global_name);
+                            return res.send({
+                                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                                data: {
+                                    content: 'Comment added successfully! ✅',
+                                    flags: 64, 
+                                },
+                            });
+                        } catch (error) {
+                            console.error('Failed to create comment:', error);
+                            return res.send({
+                                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                                data: {
+                                    content: 'Failed to add comment. ⚠️',
+                                    flags: 64, 
+                                },
+                            });
+                        }
+                    }
+        }
+
   
     /**
      * Handle Slash Command requests (type 2)
