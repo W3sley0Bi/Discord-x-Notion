@@ -3,9 +3,12 @@ import {
     InteractionResponseType,
   } from 'discord-interactions';
 
+
   import { getRandomEmoji, DiscordRequest } from '../utils';
-  import {createWebhook} from './webhook';
+
   import { SelectDB, CreateIssue } from '../commands/newIssue';
+
+
   
 //@ts-ignore
 export async function interactions(req, res) {
@@ -38,18 +41,17 @@ export async function interactions(req, res) {
       const { name } = data;
 
       switch(name){
-        case 'new_issue':
+        case 'new-issue':
           return await CreateIssue(data,res);
         case 'create-notion-link':
-          const webhook = await createWebhook(name, channel_id);
           return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
-              content: `✅ Webhook created! [Click Here](https://discord.com/api/webhooks/${webhook.id}/${webhook.token})`
-            },
-          });
+              content: `✅ Link created! Paste this link into Notion DB automation:\n\`\`\`\n${process.env.HOST}/events/${channel_id}\n\`\`\``
+            }
+          });          
           case 'test':
-            console.log('Test command received', type);
+            console.log('Test command received', type, "Channell ID:", channel_id);;
             return res.send({
               type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
               data: {
@@ -64,4 +66,5 @@ export async function interactions(req, res) {
   
     console.error('❌ Unknown interaction type', type);
     return res.status(400).json({ error: 'unknown interaction type' });
-  }
+}
+

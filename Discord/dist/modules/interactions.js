@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.interactions = interactions;
 const discord_interactions_1 = require("discord-interactions");
 const utils_1 = require("../utils");
-const webhook_1 = require("./webhook");
 const newIssue_1 = require("../commands/newIssue");
 //@ts-ignore
 async function interactions(req, res) {
@@ -32,18 +31,18 @@ async function interactions(req, res) {
     if (type === discord_interactions_1.InteractionType.APPLICATION_COMMAND) {
         const { name } = data;
         switch (name) {
-            case 'new_issue':
+            case 'new-issue':
                 return await (0, newIssue_1.CreateIssue)(data, res);
             case 'create-notion-link':
-                const webhook = await (0, webhook_1.createWebhook)(name, channel_id);
                 return res.send({
                     type: discord_interactions_1.InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                     data: {
-                        content: `✅ Webhook created! [Click Here](https://discord.com/api/webhooks/${webhook.id}/${webhook.token})`
-                    },
+                        content: `✅ Link created! Paste this link into Notion DB automation:\n\`\`\`\n${process.env.HOST}/events/${channel_id}\n\`\`\``
+                    }
                 });
             case 'test':
-                console.log('Test command received', type);
+                console.log('Test command received', type, "Channell ID:", channel_id);
+                ;
                 return res.send({
                     type: discord_interactions_1.InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                     data: {

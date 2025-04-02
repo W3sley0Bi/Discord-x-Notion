@@ -13,10 +13,11 @@
   "start": "node ./dist/app.js",
   "register": "node ./dist/commands.js",
   "cs": "npm run build && npm run start",
-  "dev": "nodemon --watch src --ext ts --exec \"npx tsc && node ./dist/app.js\""
+  "dev": "nodemon --watch src --ext ts --exec \"npx tsc && node ./dist/app.js\"",
+  "ngrok":"ngrok http --url=polite-vulture-immune.ngrok-free.app 3001"
 },
   "author": "Wesley Obi",
-  "license": "MIT",
+  "license": "NONE",
   "dependencies": {
     "@notionhq/client": "^2.3.0",
     "axios": "^1.8.3",

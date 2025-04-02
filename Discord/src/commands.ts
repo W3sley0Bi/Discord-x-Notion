@@ -14,7 +14,7 @@ const TEST_COMMAND = {
 
 
 const NEW_ISSUE = {
-  name: 'new_issue',
+  name: 'new-issue',
   description: 'Create a new issue',
   options: [
     {
