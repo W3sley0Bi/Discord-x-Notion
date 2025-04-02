@@ -31,7 +31,7 @@ const extractPageTitle = async (pageId: string): Promise<string> => {
 const wrapContent = async (data: any) => {
     const props = data.properties || {};
     const author = await fetchNotionUser(data.last_edited_by?.id) || 'Someone';
-    const action = data.created_time === data.last_edited_time ? 'new ticket' : 'updated a ticket';
+    const action = data.created_time === data.last_edited_time ? 'has created new ticket' : 'has updated a ticket';
 
     const embedFields: { name: string; value: string; inline: boolean }[] = [];
     const usedTypes: Set<string> = new Set();
@@ -102,10 +102,9 @@ const wrapContent = async (data: any) => {
         },
         title: extractTitleFromProps(data.properties),
         url: data.url,
-        description: description,
+        description: `**Description**: ${description}`,
         fields: embedFields,
-        color: 0x5865f2,
-        timestamp: new Date().toISOString(),
+        color: data.created_time === data.last_edited_time ? 0xFFFFFF : 0xFFFF00,
         footer: {
             text: `💬 ${commentCount}`,
         },

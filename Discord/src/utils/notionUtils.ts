@@ -28,7 +28,7 @@ export const createComment = async (pageId: string, comment: string, user: strin
       }
     ]
 	});
-  
+
   return response;
 }
 
@@ -36,7 +36,5 @@ export const createComment = async (pageId: string, comment: string, user: strin
 
 export const getComments = async (blockId: string)=> {
   const response = await notion.comments.list({ block_id: blockId });
-    console.log(response);
     return response
-} 
-
+}
