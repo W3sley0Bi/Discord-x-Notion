@@ -94,26 +94,11 @@ async function AddPageDb(data) {
         "children": [
             {
                 "object": "block",
-                "heading_2": {
-                    "rich_text": [
-                        {
-                            "text": {
-                                "content": "Lacinato kale"
-                            }
-                        }
-                    ]
-                }
-            },
-            {
-                "object": "block",
                 "paragraph": {
                     "rich_text": [
                         {
                             "text": {
                                 "content": `${data[2] !== undefined ? data[2].value : 'No description provided'}`,
-                                "link": {
-                                    "url": "https://en.wikipedia.org/wiki/Lacinato_kale"
-                                }
                             },
                         }
                     ],
