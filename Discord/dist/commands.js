@@ -11,7 +11,7 @@ const TEST_COMMAND = {
     contexts: [0, 1, 2],
 };
 const NEW_ISSUE = {
-    name: 'new_issue',
+    name: 'new-issue',
     description: 'Create a new issue',
     options: [
         {
