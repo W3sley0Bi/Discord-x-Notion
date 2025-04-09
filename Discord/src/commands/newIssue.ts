@@ -38,7 +38,7 @@ export async function CreateIssue(data:any, res:any) {
     data.options.forEach(element => {
         element.value != '' ? shouldI = true : shouldI = false;
     });
-    if (shouldI) {
+    if (shouldI && data.options.length >= 4) {
 
         let response = await AddPageDb(data.options);
         console.log('diocane',JSON.parse(JSON.stringify(response)));
@@ -59,6 +59,23 @@ export async function CreateIssue(data:any, res:any) {
                         })),
                         footer: {
                             text: "Thank you for using our bot!",
+                        },
+                        timestamp: new Date().toISOString(),
+                    },
+                ],
+            },
+        });
+    }else{
+        return res.json({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+                embeds: [
+                    {
+                        title: "❌ Error",
+                        description: `Please fill in all fields`,
+                        color: 16711680, // Hex color #FF0000 (red)
+                        footer: {
+                            text: "Please try again.",
                         },
                         timestamp: new Date().toISOString(),
                     },
