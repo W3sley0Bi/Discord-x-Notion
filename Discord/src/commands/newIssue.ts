@@ -1,6 +1,7 @@
 
 import { fetchDBs } from '../modules/crudDb.js';
 import { Client } from '@notionhq/client';
+import { log } from 'console';
 
 import { InteractionResponseType } from 'discord-interactions';
 
@@ -22,10 +23,7 @@ export async function SelectDB(data, res) {
             .filter(choice => choice.name.toLowerCase().includes(userDbChoise.toLowerCase()))
             .slice(0, 25);
 
-        return res.json({
-            type: 8, // nees to be 8 !!!
-            data: { choices: filteredChoices }
-        });
+        return filteredChoices
 
 
     } catch (error) {
@@ -43,7 +41,7 @@ export async function CreateIssue(data:any, res:any) {
     if (shouldI) {
 
         let response = await AddPageDb(data.options);
-        console.log(response);
+        console.log('diocane',JSON.parse(JSON.stringify(response)));
 
         return res.json({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -98,7 +96,14 @@ export async function AddPageDb(data) {
                         }
                     }
                 ]
+                
             },
+            "Status": {
+                "status": {
+                    "name": `${data[3] !== undefined ? data[3].value : 'No status provided'}`
+                }
+            }
+            
         },
         "children": [
             {

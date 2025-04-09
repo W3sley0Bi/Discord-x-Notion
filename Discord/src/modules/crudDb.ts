@@ -16,3 +16,9 @@ export async function fetchDBs() {
   }));
   return commandChoices;
 }
+
+export async function fetchDbProperties(id: string) {
+
+  const response = await notion.databases.retrieve({ database_id: id });
+  return response;
+}

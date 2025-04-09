@@ -9,6 +9,7 @@ import {interactions} from './modules/interactions';
 
 // Create an express app
 const app = express();
+app.use(express.json());
 // Get port, or default to 3000
 const PORT = process.env.PORT || 3000;
 
