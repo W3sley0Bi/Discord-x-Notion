@@ -31,7 +31,6 @@ const createComment = async (pageId, comment, user) => {
 exports.createComment = createComment;
 const getComments = async (blockId) => {
     const response = await notion.comments.list({ block_id: blockId });
-    console.log(response);
     return response;
 };
 exports.getComments = getComments;

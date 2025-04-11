@@ -11,7 +11,7 @@ const TEST_COMMAND = {
     contexts: [0, 1, 2],
 };
 const NEW_ISSUE = {
-    name: 'new_issue',
+    name: 'new-issue',
     description: 'Create a new issue',
     options: [
         {
@@ -29,9 +29,16 @@ const NEW_ISSUE = {
         },
         {
             type: 3,
+            name: 'status',
+            description: 'Select a status',
+            required: true,
+            autocomplete: true
+        },
+        {
+            type: 3,
             name: 'description',
             description: 'Enter the description of the issue',
-        }
+        },
     ],
     type: 1,
     integration_types: [0],
