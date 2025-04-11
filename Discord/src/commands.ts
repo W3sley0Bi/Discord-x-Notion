@@ -32,16 +32,16 @@ const NEW_ISSUE = {
     },
     {
       type: 3,
-      name: 'status',
-      description: 'Select a status',
-      required: true,
-      autocomplete: true
-    },
-    {
-      type: 3,
       name: 'description',
       description: 'Enter the description of the issue',
     },
+    {
+      type: 3,
+      name: 'status',
+      description: 'Select a status',
+      required: false,
+      autocomplete: true
+    }
   ],
   type: 1,
   integration_types: [0],

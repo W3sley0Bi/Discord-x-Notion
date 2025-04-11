@@ -28,28 +28,26 @@ export async function interactions(req, res) {
     if (type === 4) { // Discord's autocomplete interaction type
       switch(data.name){
         case 'new-issue':
-          const db = await SelectDB(data,res);
-          // console.log('data:', data);
-          if(data.options.length >= 4 && data.options[3].name == 'status'){
-            // console.log('Fetching properties for database:', data.options[0].value);
-            const props = await fetchDbProperties(data.options[0].value); 
-            // @ts-ignore
-           let status = props.properties.Status.status.options.map(element => {
-              // console.log('Element:', element);
-              return {name:element.name, value:element.name};
-            });
-            // console.log('Status:', status);
-            return res.json({
-              type: 8, // Tipo di risposta per autocomplete
-              data: { choices: status},   
-          });
-          }else{
-            return res.json({
-              type: 8, // Tipo di risposta per autocomplete
-              data: { choices: db },
-          });
-          }
-          default:
+          const focusedOption = data.options.find((option: { focused: boolean }) => option.focused);
+          switch(focusedOption.name) {
+            case 'database':
+              const db = await SelectDB(data, res);
+              return res.json({
+                type: 8,
+                data: { choices: db },
+              });
+            case 'status':
+              const props = await fetchDbProperties(data.options[0].value);
+              // @ts-ignore
+              let status = props.properties.Status.status.options.map(element => {
+                console.log('Element:', element);
+                return {name: element.name, value: element.name};
+              });
+              return res.json({
+                type: 8,
+                data: { choices: status },
+              });
+          }          default:
           console.error('❌ Unknown command:', data.name);
           return res.status(400).json({ error: 'unknown command' });
       }
