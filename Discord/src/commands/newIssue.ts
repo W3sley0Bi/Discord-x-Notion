@@ -12,7 +12,6 @@ export async function SelectDB(data, res) {
     try {
         // Fetch latest choices dynamically from Notion
         const choices = await fetchDBs();
-        console.log('Fetched choices:', choices);
 
         // Extract user input (if they are typing)
         //@ts-ignore
@@ -32,16 +31,16 @@ export async function SelectDB(data, res) {
     }
 }
 
-export async function CreateIssue(data:any, res:any) {
+export async function CreateIssue(dbName:string,data:any, res:any) {
     let shouldI = false;
+    
     //@ts-ignore
     data.options.forEach(element => {
         element.value != '' ? shouldI = true : shouldI = false;
     });
-    if (shouldI && data.options.length >= 4) {
+    if (shouldI) {
 
-        let response = await AddPageDb(data.options);
-        console.log('diocane',JSON.parse(JSON.stringify(response)));
+      await AddPageDb(data.options);
 
         return res.json({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -49,12 +48,12 @@ export async function CreateIssue(data:any, res:any) {
                 embeds: [
                     {
                         title: "✅ Issue Created",
-                        description: `Issue Added to ${data.options[0].value}`,
+                        description: `Issue Added to ${dbName}`,
                         color: 5763719, // Hex color #57F287 (green)
                         //@ts-ignore
                         fields: data.options.map(option => ({
                             name: option.name,
-                            value: option.value || "N/A",
+                            value: option.name == 'database' ? dbName : option.value ? option.value : 'N/A' ,
                             inline: true,
                         })),
                         footer: {
@@ -85,10 +84,15 @@ export async function CreateIssue(data:any, res:any) {
     }
 }
 
+function findPropertyByName(data: any[], name: string) {
+    let value: any = data.find((prop: { name: string}) => prop.name === name);
+    return value ? value : '';    
+}
+
 
 //@ts-ignore
 export async function AddPageDb(data) {
-
+    const statusValue = findPropertyByName(data, 'status').value;
     const response = await notion.pages.create({
         // "cover": {
         //     "type": "external",
@@ -102,25 +106,27 @@ export async function AddPageDb(data) {
         },
         "parent": {
             "type": "database_id",
-            "database_id": `${data[0].value}`
+            //@ts-ignore
+            "database_id": `${findPropertyByName(data, 'database').value}`
         },
         "properties": {
             "Name": {
                 "title": [
                     {
                         "text": {
-                            "content": `${data[1].value}`
+                            "content": `${findPropertyByName(data, 'title').value}`
                         }
                     }
                 ]
                 
             },
-            "Status": {
-                "status": {
-                    "name": `${data[3] !== undefined ? data[3].value : 'No status provided'}`
+            ...(statusValue && { 
+                "Status": {
+                    "status": {
+                        "name": statusValue
+                    }
                 }
-            }
-            
+            })
         },
         "children": [
             {
@@ -129,7 +135,7 @@ export async function AddPageDb(data) {
                     "rich_text": [
                         {
                             "text": {
-                                "content": `${data[2] !== undefined ? data[2].value : 'No description provided'}`,
+                                "content": `${findPropertyByName(data, 'description').value}`,
                             },
                         }
                     ],
