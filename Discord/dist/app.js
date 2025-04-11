@@ -9,8 +9,10 @@ const discord_interactions_1 = require("discord-interactions");
 const interactions_1 = require("./modules/interactions");
 const webhook_1 = require("./modules/webhook");
 const app = (0, express_1.default)();
+// TODO: use this middleweare if you use the enchanced webhoook 
+// app.use(express.json());
+// Get port, or default to 3000
 const PORT = process.env.PORT || 3000;
-app.use(express_1.default.json());
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
  * Parse request body and verifies incoming requests using discord-interactions package

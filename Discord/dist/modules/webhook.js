@@ -30,7 +30,7 @@ const extractPageTitle = async (pageId) => {
 const wrapContent = async (data) => {
     const props = data.properties || {};
     const author = await (0, notionUtils_1.fetchNotionUser)(data.last_edited_by?.id) || 'Someone';
-    const action = data.created_time === data.last_edited_time ? 'new ticket' : 'updated a ticket';
+    const action = data.created_time === data.last_edited_time ? 'has created new ticket' : 'has updated a ticket';
     const embedFields = [];
     const usedTypes = new Set();
     const findField = (type, names = []) => {
@@ -91,10 +91,9 @@ const wrapContent = async (data) => {
         },
         title: extractTitleFromProps(data.properties),
         url: data.url,
-        description: description,
+        description: `**Description**: ${description}`,
         fields: embedFields,
-        color: 0x5865f2,
-        timestamp: new Date().toISOString(),
+        color: data.created_time === data.last_edited_time ? 0xFFFFFF : 0xFFFF00,
         footer: {
             text: `💬 ${commentCount}`,
         },

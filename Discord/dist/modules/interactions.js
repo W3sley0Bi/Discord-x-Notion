@@ -4,6 +4,7 @@ exports.interactions = interactions;
 const discord_interactions_1 = require("discord-interactions");
 const utils_1 = require("../utils");
 const newIssue_1 = require("../commands/newIssue");
+const crudDb_1 = require("./crudDb");
 const notionUtils_1 = require("../utils/notionUtils");
 //@ts-ignore
 async function interactions(req, res) {
@@ -19,8 +20,29 @@ async function interactions(req, res) {
      */
     if (type === 4) { // Discord's autocomplete interaction type
         switch (data.name) {
-            case 'new_issue':
-                return (0, newIssue_1.SelectDB)(data, res);
+            case 'new-issue':
+                const db = await (0, newIssue_1.SelectDB)(data, res);
+                // console.log('data:', data);
+                if (data.options.length >= 4 && data.options[3].name == 'status') {
+                    // console.log('Fetching properties for database:', data.options[0].value);
+                    const props = await (0, crudDb_1.fetchDbProperties)(data.options[0].value);
+                    // @ts-ignore
+                    let status = props.properties.Status.status.options.map(element => {
+                        // console.log('Element:', element);
+                        return { name: element.name, value: element.name };
+                    });
+                    // console.log('Status:', status);
+                    return res.json({
+                        type: 8, // Tipo di risposta per autocomplete
+                        data: { choices: status },
+                    });
+                }
+                else {
+                    return res.json({
+                        type: 8, // Tipo di risposta per autocomplete
+                        data: { choices: db },
+                    });
+                }
             default:
                 console.error('❌ Unknown command:', data.name);
                 return res.status(400).json({ error: 'unknown command' });

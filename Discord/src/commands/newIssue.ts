@@ -1,6 +1,7 @@
 
 import { fetchDBs } from '../modules/crudDb.js';
 import { Client } from '@notionhq/client';
+import { log } from 'console';
 
 import { InteractionResponseType } from 'discord-interactions';
 
@@ -22,10 +23,7 @@ export async function SelectDB(data, res) {
             .filter(choice => choice.name.toLowerCase().includes(userDbChoise.toLowerCase()))
             .slice(0, 25);
 
-        return res.json({
-            type: 8, // nees to be 8 !!!
-            data: { choices: filteredChoices }
-        });
+        return filteredChoices
 
 
     } catch (error) {
@@ -40,10 +38,10 @@ export async function CreateIssue(data:any, res:any) {
     data.options.forEach(element => {
         element.value != '' ? shouldI = true : shouldI = false;
     });
-    if (shouldI) {
+    if (shouldI && data.options.length >= 4) {
 
         let response = await AddPageDb(data.options);
-        console.log(response);
+        console.log('diocane',JSON.parse(JSON.stringify(response)));
 
         return res.json({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -61,6 +59,23 @@ export async function CreateIssue(data:any, res:any) {
                         })),
                         footer: {
                             text: "Thank you for using our bot!",
+                        },
+                        timestamp: new Date().toISOString(),
+                    },
+                ],
+            },
+        });
+    }else{
+        return res.json({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+                embeds: [
+                    {
+                        title: "❌ Error",
+                        description: `Please fill in all fields`,
+                        color: 16711680, // Hex color #FF0000 (red)
+                        footer: {
+                            text: "Please try again.",
                         },
                         timestamp: new Date().toISOString(),
                     },
@@ -98,21 +113,16 @@ export async function AddPageDb(data) {
                         }
                     }
                 ]
+                
             },
+            "Status": {
+                "status": {
+                    "name": `${data[3] !== undefined ? data[3].value : 'No status provided'}`
+                }
+            }
+            
         },
         "children": [
-            {
-                "object": "block",
-                "heading_2": {
-                    "rich_text": [
-                        {
-                            "text": {
-                                "content": "Lacinato kale"
-                            }
-                        }
-                    ]
-                }
-            },
             {
                 "object": "block",
                 "paragraph": {
@@ -120,9 +130,6 @@ export async function AddPageDb(data) {
                         {
                             "text": {
                                 "content": `${data[2] !== undefined ? data[2].value : 'No description provided'}`,
-                                "link": {
-                                    "url": "https://en.wikipedia.org/wiki/Lacinato_kale"
-                                }
                             },
                         }
                     ],

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchDBs = fetchDBs;
+exports.fetchDbProperties = fetchDbProperties;
 const client_1 = require("@notionhq/client");
 const notion = new client_1.Client({ auth: process.env.NOTION_API_KEY });
 async function fetchDBs() {
@@ -15,4 +16,8 @@ async function fetchDBs() {
         value: choice.id,
     }));
     return commandChoices;
+}
+async function fetchDbProperties(id) {
+    const response = await notion.databases.retrieve({ database_id: id });
+    return response;
 }
